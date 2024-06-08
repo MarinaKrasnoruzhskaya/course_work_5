@@ -18,6 +18,12 @@ class DBManager:
 
     def create_database(self):
         """ Метод для создания БД """
+        self.cur.execute(
+            f"""SELECT pg_terminate_backend(pg_stat_activity.pid)
+            FROM pg_stat_activity
+            WHERE pg_stat_activity.datname = '{self.db_name}'
+            AND pid <> pg_backend_pid()"""
+        )
         self.cur.execute(f"DROP DATABASE IF EXISTS {self.db_name}")
         self.cur.execute(f"CREATE DATABASE {self.db_name}")
 
